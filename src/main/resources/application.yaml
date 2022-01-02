@@ -1,0 +1,49 @@
+rest:
+  security:
+    enabled: 'true'
+    issuer-uri: http://localhost:8080/auth/realms/dz
+
+kc:
+  base-url: http://localhost:8080/auth
+  realm: dz
+  realm-url: ${kc.base-url}/realms/${kc.realm}
+
+
+
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${kc.realm-url}
+
+
+  jpa:
+    generate-ddl: 'true'
+    hibernate:
+      ddl-auto: create
+    show-sql: 'true'
+    database-platform: org.hibernate.dialect.PostgreSQL10Dialect
+    properties:
+      hibernate:
+        format_sql: 'true'
+  application:
+    name: dz-service
+  datasource:
+    password: postgres
+    username: postgres
+    url: jdbc:postgresql://localhost:5432/postgres
+
+
+logging:
+  level:
+    org:
+      arun: DEBUG
+      springframework:
+        security: DEBUG
+        boot:
+          autoconfigure:
+            logging: INFO
+    root: INFO
+server:
+  port: '8081'
