@@ -11,6 +11,7 @@ import java.time.format.DateTimeFormatter
 @Service
 class ReadStockFromExternalService {
 
+    // FIXME : its too ugly
     private val log: Logger = LoggerFactory.getLogger(ReadStockFromExternalService::class.java)
     fun fromRowToStockCsv(row: List<String>, date: List<String>): StockCsv {
         val stockCsv = StockCsv(product = row[0], stockInAndBalance = mutableListOf())
@@ -18,15 +19,19 @@ class ReadStockFromExternalService {
         var isToday = false
         var stockInAndBalance = StockInAndBalance(0, 0, LocalDate.now())
         var dayIndex = 1
+        var dateIndex = 0
 
-        while (dayIndex != date.size) {
+        while (dayIndex != (row.size + 1)) {
             if (isYesterday and isToday) {
                 log.info(" :: Retrieving data for day " + stockCsv.product)
-                stockInAndBalance.stockDate = LocalDate.parse(date[dayIndex], DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+                stockInAndBalance.stockDate =
+                    LocalDate.parse(date[dateIndex], DateTimeFormatter.ofPattern("dd/MM/yyyy"))
                 stockCsv.stockInAndBalance.add(stockInAndBalance)
                 stockInAndBalance = StockInAndBalance(0, 0, LocalDate.now())
                 isYesterday = false
                 isToday = false
+                dateIndex += 1
+                if (dayIndex == row.size) break
             } else if (!isYesterday) {
                 stockInAndBalance.stockIn = row[dayIndex].toInt()
                 isYesterday = true
