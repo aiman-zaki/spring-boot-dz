@@ -23,22 +23,23 @@ class StockWithDetailsId(
 
 /*
 *   View
-*   create or replace view stocks_with_details as (select s.id , p.code,
-    sh2.yesterday_quantity_balance,
-    sh.quantity_in ,
-    (pp.price_cost_in_rm * sh.quantity_in) as modal,
-    abs(sh.quantity_balance) as quantity_balance,
-    greatest((sh2.yesterday_quantity_balance + sh.quantity_in - sh.quantity_balance),0)  as quantity_sale,
-    greatest((sh2.yesterday_quantity_balance + sh.quantity_in - sh.quantity_balance),0) * pp.price_sell_in_rm  as sale,
-    s.created_at ::date as stock_date
+*    create or replace view stocks_with_details as (select s.id , p.code as "product_code",
+    sh2.yesterday_quantity_balance as "yesterday_quantity_balance",
+    sh.quantity_in as "quantity_in" ,
+    abs(sh.quantity_balance) as "quantity_balance",
+    (pp.price_cost_in_rm * sh.quantity_in) as "total_cost_in_rm",
+    greatest((sh2.yesterday_quantity_balance + sh.quantity_in - sh.quantity_balance),0)  as "quantity_sold_in_rm",
+    greatest((sh2.yesterday_quantity_balance + sh.quantity_in - sh.quantity_balance),0) * pp.price_sell_in_rm  as "total_sale_in_rm",
+    s.stock_date as stock_date
     from stocks s
     left join stock_histories sh on sh.stock_id = s.id
     left join products p on  sh.product_id = p.id
-    left join product_prices pp on p.code = pp.product_code
-    left join lateral (select sh2.quantity_balance as yesterday_quantity_balance from stock_histories sh2 join stocks s2 on s2.id  = sh2.stock_id where s2.created_at ::date = s.created_at ::date -  INTERVAL '1 DAY' and p.id = sh2.product_id) sh2 on true
+    left join product_prices pp on p.id = pp.product_id
+    left join lateral (select sh2.quantity_balance as yesterday_quantity_balance from stock_histories sh2 join stocks s2 on s2.id  = sh2.stock_id where s2.stock_date = s.stock_date -  INTERVAL '1 DAY' and p.id = sh2.product_id) sh2 on true
     where pp.is_active = true
     group by s.id , p.code , p.id , sh.quantity_in,sh.quantity_balance ,  p.code, pp.price_cost_in_rm, pp.price_sell_in_rm , sh2.yesterday_quantity_balance, s.created_at
     order by stock_date, p.id)
+
 
 * * */
 @Entity
@@ -66,6 +67,6 @@ class StockWithDetails(
 
     @ManyToOne(targetEntity = Stock::class, fetch = FetchType.LAZY)
     @JoinColumn(name = "stock_code", insertable = false, updatable = false)
-    val stock: Stock
+    val stock: Stock,
 
 )

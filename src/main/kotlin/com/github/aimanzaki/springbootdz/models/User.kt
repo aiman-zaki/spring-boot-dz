@@ -3,10 +3,10 @@ package com.github.aimanzaki.springbootdz.models
 import com.github.aimanzaki.springbootdz.enums.Authorities
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.GenericGenerator
-import org.hibernate.annotations.Type
 import org.hibernate.annotations.UpdateTimestamp
 import java.time.OffsetDateTime
 import java.util.UUID
+import javax.persistence.CascadeType
 import javax.persistence.Column
 import javax.persistence.ElementCollection
 import javax.persistence.Entity
@@ -39,18 +39,17 @@ class User(
 
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
     @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "uuid2")
-    @Type(type = "org.hibernate.type.UUIDCharType")
     @Id
     val id: UUID = UUID.randomUUID()
 
-    @CreationTimestamp
+    @field:CreationTimestamp
     @Column(insertable = false, updatable = false, name = "created_at")
     lateinit var createdAt: OffsetDateTime
 
-    @UpdateTimestamp
+    @field:UpdateTimestamp
     @Column(insertable = false, updatable = false, name = "updated_at")
     lateinit var updatedAt: OffsetDateTime
 
-    @OneToMany(mappedBy = "user")
-    val stock: List<Stock> = listOf()
+    @OneToMany(mappedBy = "user", cascade = [CascadeType.ALL])
+    lateinit var stocks: List<Stock>
 }

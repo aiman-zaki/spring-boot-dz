@@ -2,7 +2,6 @@ package com.github.aimanzaki.springbootdz.models
 
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.GenericGenerator
-import org.hibernate.annotations.Type
 import org.hibernate.annotations.UpdateTimestamp
 import java.time.OffsetDateTime
 import java.util.UUID
@@ -23,7 +22,6 @@ class Supplier(
 ) {
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
     @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "uuid2")
-    @Type(type = "org.hibernate.type.UUIDCharType")
     @Id
     val id: UUID = UUID.randomUUID()
 
