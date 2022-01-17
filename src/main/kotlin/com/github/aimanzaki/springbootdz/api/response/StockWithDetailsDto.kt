@@ -6,12 +6,13 @@ import java.time.OffsetDateTime
 
 class StockWithDetailsDto(
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    val productCode: String?,
+    val productCode: String,
     val yesterdayQuantityBalance: Int? = 0,
     val quantityIn: Int?,
-    val modalPrice: Double?,
     val quantityBalance: Int?,
-    val sale: Double?,
+    val totalCostInRM: Double?,
+    val quantitySoldToday: Int?,
+    val totalSaleInRM: Double?,
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty("stockDate")
     var stockDate: OffsetDateTime?,

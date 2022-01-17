@@ -31,6 +31,10 @@ class Stock(
     @Column(name = "branch_id")
     val branchId: UUID,
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "source", nullable = false)
+    val source: StockSource = StockSource.MANUAL,
+
 ) {
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
     @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "uuid2")
@@ -39,10 +43,6 @@ class Stock(
 
     @Column(name = "stock_date", nullable = false)
     var stockDate: LocalDate = LocalDate.now()
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "source", nullable = false)
-    var source: StockSource = StockSource.MANUAL
 
     @field:CreationTimestamp
     @Column(name = "created_at")
@@ -55,8 +55,8 @@ class Stock(
     @OneToMany(mappedBy = "stock", cascade = [CascadeType.ALL])
     lateinit var stockHistories: List<StockHistory>
 
-    @OneToMany(mappedBy = "stock", cascade = [CascadeType.ALL])
-    val stockWithDetails: List<StockWithDetails> = listOf()
+    @OneToMany(mappedBy = "stock")
+    lateinit var stockWithDetails: List<StockWithDetails>
 
     @ManyToOne(targetEntity = User::class, fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", updatable = false, insertable = false)

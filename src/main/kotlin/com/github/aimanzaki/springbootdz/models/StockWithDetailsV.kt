@@ -2,11 +2,12 @@ package com.github.aimanzaki.springbootdz.models
 
 import org.hibernate.annotations.Immutable
 import java.io.Serializable
+import java.time.OffsetDateTime
+import java.util.UUID
 import javax.persistence.Column
 import javax.persistence.Embeddable
 import javax.persistence.EmbeddedId
 import javax.persistence.Entity
-import javax.persistence.FetchType
 import javax.persistence.JoinColumn
 import javax.persistence.ManyToOne
 import javax.persistence.Table
@@ -14,7 +15,7 @@ import javax.persistence.Table
 @Embeddable
 class StockWithDetailsId(
     @Column(name = "stock_id")
-    val stockId: String,
+    val stockId: UUID,
 
     @Column(name = "product_code")
     val productCode: String,
@@ -23,12 +24,12 @@ class StockWithDetailsId(
 
 /*
 *   View
-*    create or replace view stocks_with_details as (select s.id , p.code as "product_code",
+*    create or replace view stocks_with_details as (select s.id as "stock_id" , p.code as "product_code",
     sh2.yesterday_quantity_balance as "yesterday_quantity_balance",
     sh.quantity_in as "quantity_in" ,
     abs(sh.quantity_balance) as "quantity_balance",
     (pp.price_cost_in_rm * sh.quantity_in) as "total_cost_in_rm",
-    greatest((sh2.yesterday_quantity_balance + sh.quantity_in - sh.quantity_balance),0)  as "quantity_sold_in_rm",
+    greatest((sh2.yesterday_quantity_balance + sh.quantity_in - sh.quantity_balance),0)  as "quantity_sold_today",
     greatest((sh2.yesterday_quantity_balance + sh.quantity_in - sh.quantity_balance),0) * pp.price_sell_in_rm  as "total_sale_in_rm",
     s.stock_date as stock_date
     from stocks s
@@ -56,17 +57,23 @@ class StockWithDetails(
     @Column(name = "quantity_in")
     val quantityIn: Int?,
 
-    @Column(name = "modal")
-    val modalPrice: Double,
-
     @Column(name = "quantity_balance")
     val quantityBalance: Int?,
 
-    @Column(name = "sale")
-    val sale: Double?,
+    @Column(name = "total_cost_in_rm")
+    val totalCostInRM: Double,
 
-    @ManyToOne(targetEntity = Stock::class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "stock_code", insertable = false, updatable = false)
+    @Column(name = "quantity_sold_today")
+    val quantitySoldToday: Int?,
+
+    @Column(name = "total_sale_in_rm")
+    val totalSaleInRM: Double,
+
+    @Column(name = "stock_date")
+    val stockDate: OffsetDateTime,
+
+    @ManyToOne(targetEntity = Stock::class)
+    @JoinColumn(name = "stock_id", insertable = false, updatable = false)
     val stock: Stock,
 
 )

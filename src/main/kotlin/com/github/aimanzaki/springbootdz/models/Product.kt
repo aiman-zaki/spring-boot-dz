@@ -3,7 +3,6 @@ package com.github.aimanzaki.springbootdz.models
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.GenericGenerator
 import org.hibernate.annotations.UpdateTimestamp
-import org.hibernate.annotations.Where
 import java.time.OffsetDateTime
 import java.util.UUID
 import javax.persistence.CascadeType
@@ -16,7 +15,6 @@ import javax.persistence.Id
 import javax.persistence.JoinColumn
 import javax.persistence.ManyToOne
 import javax.persistence.OneToMany
-import javax.persistence.OneToOne
 import javax.persistence.Table
 
 @Entity
@@ -27,10 +25,6 @@ class Product(
     val code: String,
 
     val name: String,
-
-    @OneToOne(mappedBy = "product", cascade = [CascadeType.ALL])
-    @Where(clause = "is_active=true")
-    val productPrice: ProductPrice,
 
     @Column(name = "supplier_id")
     val supplierId: UUID,
@@ -55,4 +49,8 @@ class Product(
     @ManyToOne(cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
     @JoinColumn(name = "supplier_id", insertable = false, updatable = false)
     lateinit var supplier: Supplier
+
+    @OneToMany(mappedBy = "product", cascade = [CascadeType.ALL])
+    // @Where(clause = "is_active=true")
+    var productsPrice: MutableList<ProductPrice> = mutableListOf()
 }
