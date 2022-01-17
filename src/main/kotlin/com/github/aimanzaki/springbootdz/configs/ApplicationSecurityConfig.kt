@@ -14,20 +14,16 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
+import org.springframework.security.oauth2.client.web.OAuth2AuthorizationCodeGrantFilter
 import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
-
-internal class CustomAuthenticationConverter : Converter<Jwt, AbstractAuthenticationToken> {
-    override fun convert(jwt: Jwt): AbstractAuthenticationToken {
-        return JwtAuthenticationToken(jwt, listOf())
-    }
-}
 
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-class ApplicationSecurityConfig() :
+class ApplicationSecurityConfig(
+    private val userSyncFilter: UserSyncFilter,
+) :
     WebSecurityConfigurerAdapter() {
 
     companion object {
@@ -68,8 +64,10 @@ class ApplicationSecurityConfig() :
             // .and().csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()).and()
             .and().csrf().disable()
             .headers().frameOptions().sameOrigin()
-            .and().authorizeRequests().anyRequest().authenticated()
-            .and().oauth2ResourceServer().jwt().jwtAuthenticationConverter(getJwtAuthenticationConverter())
+            .and().authorizeRequests().anyRequest().permitAll()
+            .and().addFilterAfter(userSyncFilter, OAuth2AuthorizationCodeGrantFilter::class.java)
+            .oauth2ResourceServer().jwt()
+            .jwtAuthenticationConverter(getJwtAuthenticationConverter())
         // .and().oauth2ResourceServer { o -> o.jwt().jwtAuthenticationConverter(jwtAuthenticationConverter()) }
         // .and().oauth2Login().userInfoEndpoint().oidcUserService(keycloakOauth2UserService)
         // .and().addFilterBefore(authenticationRequestFilter, UsernamePasswordAuthenticationFilter::class.java)

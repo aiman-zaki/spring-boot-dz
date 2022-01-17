@@ -10,7 +10,7 @@ plugins {
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
     kotlin("jvm") version "1.6.10"
     kotlin("plugin.spring") version "1.6.10"
-    id("org.jetbrains.kotlin.plugin.jpa") version "1.6.10"
+    kotlin("plugin.jpa") version "1.6.10"
     idea
     kotlin("kapt") version "1.6.10"
     kotlin("plugin.serialization") version "1.6.10"
@@ -34,6 +34,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-webflux:${property("springBootVersion")}")
     implementation("org.springframework.boot:spring-boot-starter-cache:${property("springBootVersion")}")
     implementation("org.springframework.boot:spring-boot-starter-data-redis:${property("springBootVersion")}")
+    implementation("org.springframework.security:spring-security-oauth2-client:5.6.1")
     implementation("org.springframework.cloud:spring-cloud-starter-sleuth:3.1.0")
     implementation("org.springframework.cloud:spring-cloud-sleuth-zipkin:3.1.0")
     // implementation("org.keycloak:keycloak-spring-boot-starter:15.0.2")
