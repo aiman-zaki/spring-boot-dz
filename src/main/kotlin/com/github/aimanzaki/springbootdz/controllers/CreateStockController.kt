@@ -21,14 +21,18 @@ class CreateStockController(
     var readStockFromExternalService: ReadStockFromExternalService,
 ) {
 
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @GetMapping("/api/stocks/create-by-csv")
-    fun getStocks(): ResponseEntity<String> {
-        return ResponseEntity.ok(SecurityContextHolder.getContext().authentication.name)
+    fun getStock() {
     }
 
-    @PreAuthorize("hasAuthority('USER')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @PostMapping("/api/stocks/create-by-csv")
-    fun createStockByCsv(@RequestParam("file") file: MultipartFile): ResponseEntity<String> {
+    fun createStockByCsv(
+        @RequestParam("file") file: MultipartFile,
+        @RequestParam("branchId") branchId: UUID,
+        @RequestParam("supplierId") supplierId: UUID,
+    ): ResponseEntity<String> {
 
         val stocksCsv: MutableList<StockCsv> = arrayListOf()
         val inputStream = file.inputStream
@@ -50,7 +54,14 @@ class CreateStockController(
             stocksCsv.add(readStockFromExternalService.fromMultipart(nextLine, date))
             nextLine = bufferedReader.readLine()
         }
-        createStockService.createStockFromCsv(UUID.randomUUID(), stocksCsv)
+
+        createStockService.createStockFromCsv(
+            UUID.fromString(SecurityContextHolder.getContext().authentication.name),
+            supplierId,
+            branchId,
+            stocksCsv,
+            date[0]
+        )
 
         return ResponseEntity.ok("Success!")
     }
