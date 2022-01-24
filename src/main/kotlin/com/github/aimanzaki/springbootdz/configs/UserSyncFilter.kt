@@ -5,17 +5,22 @@ import com.github.aimanzaki.springbootdz.repositories.UserRepository
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Component
-import org.springframework.web.filter.GenericFilterBean
+import org.springframework.web.filter.OncePerRequestFilter
 import java.util.UUID
 import javax.servlet.FilterChain
-import javax.servlet.ServletRequest
-import javax.servlet.ServletResponse
+import javax.servlet.http.HttpServletRequest
+import javax.servlet.http.HttpServletResponse
 
 // Sync keycloak user with application db
 // FIXME : theres better impl than this
 @Component
-class UserSyncFilter(private val userRepository: UserRepository) : GenericFilterBean() {
-    override fun doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain) {
+class UserSyncFilter(private val userRepository: UserRepository) : OncePerRequestFilter() {
+
+    override fun doFilterInternal(
+        request: HttpServletRequest,
+        response: HttpServletResponse,
+        filterChain: FilterChain,
+    ) {
 
         val securityContextHolder = SecurityContextHolder.getContext()
 
@@ -28,6 +33,6 @@ class UserSyncFilter(private val userRepository: UserRepository) : GenericFilter
             }
         }
 
-        chain.doFilter(request, response)
+        filterChain.doFilter(request, response)
     }
 }
