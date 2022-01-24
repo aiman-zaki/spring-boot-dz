@@ -1,12 +1,12 @@
 package com.github.aimanzaki.springbootdz.services
 
-import com.github.aimanzaki.springbootdz.api.response.UserDto
+import com.github.aimanzaki.springbootdz.dto.UserDto
 import com.github.aimanzaki.springbootdz.models.User
-import com.github.aimanzaki.springbootdz.repositories.UsersRepository
+import com.github.aimanzaki.springbootdz.repositories.UserRepository
 import org.springframework.stereotype.Service
 
 @Service
-class UsersService(val usersRepository: UsersRepository) {
+class UserService(val userRepository: UserRepository) {
 
     fun createUser(userDto: UserDto) {
         val user = User(
@@ -15,6 +15,6 @@ class UsersService(val usersRepository: UsersRepository) {
             password = "",
             authorities = userDto.authorities
         )
-        usersRepository.save(user)
+        userRepository.save(user)
     }
 }

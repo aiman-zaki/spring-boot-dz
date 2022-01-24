@@ -17,26 +17,29 @@ import javax.persistence.Table
 @Table(name = "branches")
 class Branch(
 
-    @Column(name = "code", length = 10)
-    val code: String,
-
-    @Column(name = "name")
-    val name: String,
-
+    @Column(name = "code", nullable = true, length = 20)
+    var code: String? = null,
 ) {
+
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
     @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "uuid2")
     @Id
-    val id: UUID = UUID.randomUUID()
+    val id: UUID? = null
 
-    @CreationTimestamp
-    @Column(insertable = false, updatable = false, name = "created_at")
+    @Column(name = "name")
+    var name: String? = null
+
+    @field:CreationTimestamp
+    @Column(name = "created_at")
     lateinit var createdAt: OffsetDateTime
 
-    @UpdateTimestamp
-    @Column(insertable = false, updatable = false, name = "updated_at")
+    @field:UpdateTimestamp
+    @Column(name = "updated_at")
     lateinit var updatedAt: OffsetDateTime
 
     @OneToMany(mappedBy = "branch")
-    lateinit var stocks: List<Stock>
+    lateinit var stocks: MutableList<Stock>
+
+    @Column(name = "is_active")
+    var isActive: Boolean = true
 }

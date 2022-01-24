@@ -53,10 +53,10 @@ class Stock(
     lateinit var updatedAt: OffsetDateTime
 
     @OneToMany(mappedBy = "stock", cascade = [CascadeType.ALL])
-    lateinit var stockHistories: List<StockHistory>
+    lateinit var stockHistories: MutableList<StockHistory>
 
     @OneToMany(mappedBy = "stock")
-    lateinit var stockWithDetails: List<StockWithDetails>
+    lateinit var stockWithDetails: MutableList<StockWithDetails>
 
     @ManyToOne(targetEntity = User::class, fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", updatable = false, insertable = false)

@@ -1,7 +1,7 @@
 package com.github.aimanzaki.springbootdz.datamapping
 
-import com.github.aimanzaki.springbootdz.api.response.StockDto
-import com.github.aimanzaki.springbootdz.api.response.StockWithDetailsDto
+import com.github.aimanzaki.springbootdz.dto.StockDto
+import com.github.aimanzaki.springbootdz.dto.StockWithDetailsDto
 import com.github.aimanzaki.springbootdz.models.Stock
 import com.github.aimanzaki.springbootdz.models.StockWithDetails
 

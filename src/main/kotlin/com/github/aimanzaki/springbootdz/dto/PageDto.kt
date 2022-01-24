@@ -1,4 +1,4 @@
-package com.github.aimanzaki.springbootdz.api.response
+package com.github.aimanzaki.springbootdz.dto
 
 data class PageDto<U>(
     val isFirstPage: Boolean,

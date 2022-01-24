@@ -1,16 +1,17 @@
 package com.github.aimanzaki.springbootdz.services
 
-import com.github.aimanzaki.springbootdz.api.response.PageDto
-import com.github.aimanzaki.springbootdz.api.response.StockDto
 import com.github.aimanzaki.springbootdz.datamapping.toDto
 import com.github.aimanzaki.springbootdz.datamapping.toPageDto
+import com.github.aimanzaki.springbootdz.dto.PageDto
+import com.github.aimanzaki.springbootdz.dto.StockDto
 import com.github.aimanzaki.springbootdz.repositories.StockRepository
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 @Service
-class StocksService(
+class StockService(
     var stockRepository: StockRepository,
     var stocksWithDetailsService: StocksWithDetailsService,
 ) {
@@ -21,9 +22,16 @@ class StocksService(
         stockDate: LocalDate?,
         pageable: Pageable,
     ): PageDto<StockDto> {
+
+        var stockDateFormatted = stockDate?.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+
+        if (stockDateFormatted.isNullOrBlank()) stockDateFormatted = ""
+
         val data = stockRepository.findAllWithFilterAndPageable(
             stockId,
-            branchId, pageable
+            branchId,
+            stockDateFormatted,
+            pageable
         )
         val content = data.content.map { stock -> stock.toDto() }
         return data.toPageDto(content = content)

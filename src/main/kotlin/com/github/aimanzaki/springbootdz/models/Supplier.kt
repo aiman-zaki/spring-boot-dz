@@ -17,7 +17,7 @@ import javax.persistence.Table
 @Table(name = "suppliers")
 class Supplier(
 
-    val name: String,
+    var name: String? = null,
 
 ) {
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
@@ -34,5 +34,11 @@ class Supplier(
     lateinit var updatedAt: OffsetDateTime
 
     @OneToMany(mappedBy = "supplier")
-    val product: List<Product> = listOf()
+    lateinit var product: MutableList<Product>
+
+    @Column(name = "is_active")
+    var isActive: Boolean = true
+
+    @Column(name = "code", nullable = true, length = 20)
+    var code: String? = ""
 }

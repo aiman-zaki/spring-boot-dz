@@ -21,7 +21,7 @@ import javax.persistence.Table
 @Table(name = "products")
 class Product(
 
-    @Column(unique = true, length = 50)
+    @Column(unique = true, length = 50, nullable = false)
     val code: String,
 
     val name: String,
@@ -44,7 +44,7 @@ class Product(
     lateinit var updatedAt: OffsetDateTime
 
     @OneToMany(mappedBy = "product", cascade = [CascadeType.ALL])
-    lateinit var stockWithHistories: List<StockHistory>
+    lateinit var stockWithHistories: MutableList<StockHistory>
 
     @ManyToOne(cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
     @JoinColumn(name = "supplier_id", insertable = false, updatable = false)
@@ -53,4 +53,7 @@ class Product(
     @OneToMany(mappedBy = "product", cascade = [CascadeType.ALL])
     // @Where(clause = "is_active=true")
     var productsPrice: MutableList<ProductPrice> = mutableListOf()
+
+    @Column(name = "is_active")
+    val isActive: Boolean = true
 }

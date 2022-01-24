@@ -1,4 +1,4 @@
-package com.github.aimanzaki.springbootdz.api.response
+package com.github.aimanzaki.springbootdz.dto
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty

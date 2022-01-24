@@ -2,7 +2,6 @@ package com.github.aimanzaki.springbootdz.models
 
 import com.github.aimanzaki.springbootdz.enums.Authorities
 import org.hibernate.annotations.CreationTimestamp
-import org.hibernate.annotations.GenericGenerator
 import org.hibernate.annotations.UpdateTimestamp
 import java.time.OffsetDateTime
 import java.util.UUID
@@ -12,8 +11,6 @@ import javax.persistence.ElementCollection
 import javax.persistence.Entity
 import javax.persistence.EnumType
 import javax.persistence.Enumerated
-import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
 import javax.persistence.Id
 import javax.persistence.OneToMany
 import javax.persistence.Table
@@ -37,10 +34,10 @@ class User(
 
 ) {
 
-    @GenericGenerator(name = "uuid2", strategy = "uuid2")
-    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "uuid2")
+    // @GenericGenerator(name = "uuid2", strategy = "uuid2")
+    // @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "uuid2")
     @Id
-    val id: UUID = UUID.randomUUID()
+    lateinit var id: UUID
 
     @field:CreationTimestamp
     @Column(insertable = false, updatable = false, name = "created_at")
@@ -51,5 +48,5 @@ class User(
     lateinit var updatedAt: OffsetDateTime
 
     @OneToMany(mappedBy = "user", cascade = [CascadeType.ALL])
-    lateinit var stocks: List<Stock>
+    lateinit var stocks: MutableList<Stock>
 }

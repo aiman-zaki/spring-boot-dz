@@ -1,6 +1,6 @@
 package com.github.aimanzaki.springbootdz.datamapping
 
-import com.github.aimanzaki.springbootdz.api.response.PageDto
+import com.github.aimanzaki.springbootdz.dto.PageDto
 import org.springframework.data.domain.Page
 
 fun <T, U> Page<T>.toPageDto(content: List<U>) = PageDto(
