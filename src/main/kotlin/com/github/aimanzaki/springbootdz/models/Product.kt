@@ -22,12 +22,12 @@ import javax.persistence.Table
 class Product(
 
     @Column(unique = true, length = 50, nullable = false)
-    val code: String,
+    val code: String?,
 
-    val name: String,
+    val name: String?,
 
     @Column(name = "supplier_id")
-    val supplierId: UUID,
+    val supplierId: UUID?,
 
 ) {
     @GenericGenerator(name = "uuid2", strategy = "uuid2")

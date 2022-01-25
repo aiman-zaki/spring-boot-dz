@@ -8,9 +8,9 @@ data class BranchDto(
     val id: UUID? = null,
 
     @JsonProperty("code")
-    val code: String,
+    val code: String?,
     @JsonProperty("name")
-    val name: String,
+    val name: String?,
 
     @JsonProperty("isActive")
     val isActive: Boolean,

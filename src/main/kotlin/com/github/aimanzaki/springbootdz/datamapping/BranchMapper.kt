@@ -9,3 +9,11 @@ fun BranchDto.toEntity(branch: Branch): Branch {
     branch.name = this.name
     return branch
 }
+
+fun Branch.toDto() = BranchDto(
+    id = this.id,
+    name = this.name,
+    code = this.code,
+    isActive = this.isActive,
+
+)
