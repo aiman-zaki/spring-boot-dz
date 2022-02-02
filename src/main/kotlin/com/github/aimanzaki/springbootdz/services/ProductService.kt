@@ -24,7 +24,8 @@ class ProductService(private val productRepository: ProductRepository) {
             id = id,
             code = code,
             name = name,
-            isActive = isActive, pageable = pageable
+            isActive = isActive,
+            pageable = pageable
         )
         val contents = products.content.map { product -> product.toDto() }
         return products.toPageDto(contents)

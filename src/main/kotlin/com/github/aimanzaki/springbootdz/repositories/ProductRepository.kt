@@ -13,7 +13,7 @@ interface ProductRepository : JpaRepository<Product, UUID> {
     fun findByCode(code: String): Optional<Product>
 
     @Query(
-        "SELECT p FROM Product WHERE CAST(id as org.hibernate.type.UUIDCharType) LIKE CONCAT('%',:id,'%') AND " +
+        "SELECT p FROM Product p WHERE CAST(id as org.hibernate.type.UUIDCharType) LIKE CONCAT('%',:id,'%') AND " +
             "name LIKE CONCAT('%',:name,'%') AND code LIKE CONCAT('%',:code,'%') and isActive = :isActive"
     )
     fun findWithFilterAndPageable(
@@ -22,5 +22,6 @@ interface ProductRepository : JpaRepository<Product, UUID> {
         @Param("name") name: String?,
         @Param("isActive") isActive: Boolean,
         pageable: Pageable,
+
     ): Page<Product>
 }
