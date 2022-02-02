@@ -23,34 +23,32 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 class ApplicationSecurityConfig(
     private val userSyncFilter: UserSyncFilter,
+    private val keycloakProperties: KeycloakProperties,
 ) :
     WebSecurityConfigurerAdapter() {
 
     companion object {
         val log: Logger = LoggerFactory.getLogger(ApplicationSecurityConfig::class.java)
-        private const val ROLE_CLAIM = "resource_access"
-
-        // TODO : move to application.properties
-        private val CLIENTS_ID = listOf("react")
     }
 
     fun getJwtAuthenticationConverter(): Converter<Jwt?, AbstractAuthenticationToken?>? {
         val converter = JwtAuthenticationConverter()
         converter.setJwtGrantedAuthoritiesConverter { jwt ->
             log.debug(jwt.claims.entries.joinToString(","))
-            val resourceAccess = jwt.claims.entries.find { entry -> entry.key == ROLE_CLAIM }
+            val grantedRoles = mutableListOf<GrantedAuthority>()
+            val resourceAccess = jwt.claims.entries.find { entry -> entry.key == keycloakProperties.roleClaim }
             val resource = resourceAccess?.value as JSONObject
-            val clients = resource.entries.filter { client -> CLIENTS_ID.contains(client.key) }
-            val roles = clients.map { client ->
+            val clients = resource.entries.filter { client -> keycloakProperties.clientIds.contains(client.key) }
+
+            // Check every client for roles
+            clients.forEach { client ->
                 val rolesObject = client.value as JSONObject
                 val roles = rolesObject["roles"] as JSONArray
-                roles.map { r -> SimpleGrantedAuthority("ROLE_$r".uppercase()) }
+                val simpleGrantedAuthority = roles.map { r -> SimpleGrantedAuthority("ROLE_$r".uppercase()) }
+                grantedRoles.addAll(simpleGrantedAuthority)
             }
 
-            // FIXME : Just to make it works
-            val role = roles[0]
-
-            listOf<GrantedAuthority>().plus(role)
+            grantedRoles
         }
 
         return converter
@@ -61,15 +59,11 @@ class ApplicationSecurityConfig(
         http.sessionManagement()
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and().cors()
-            // .and().csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()).and()
             .and().csrf().disable()
             .headers().frameOptions().sameOrigin()
             .and().authorizeRequests().anyRequest().permitAll()
             .and().addFilterAfter(userSyncFilter, OAuth2AuthorizationCodeGrantFilter::class.java)
             .oauth2ResourceServer().jwt()
             .jwtAuthenticationConverter(getJwtAuthenticationConverter())
-        // .and().oauth2ResourceServer { o -> o.jwt().jwtAuthenticationConverter(jwtAuthenticationConverter()) }
-        // .and().oauth2Login().userInfoEndpoint().oidcUserService(keycloakOauth2UserService)
-        // .and().addFilterBefore(authenticationRequestFilter, UsernamePasswordAuthenticationFilter::class.java)
     }
 }
