@@ -8,15 +8,19 @@ kc:
   realm: dz
   realm-url: ${kc.base-url}/realms/${kc.realm}
 
-
-
 spring:
+  servlet:
+    multipart:
+      max-file-size: '128MB'
+      max-request-size: '128MB'
+  http:
+    multipart:
+      enabled: true
   security:
     oauth2:
       resourceserver:
         jwt:
           issuer-uri: ${kc.realm-url}
-
 
   jpa:
     generate-ddl: 'true'
@@ -33,6 +37,11 @@ spring:
     password: postgres
     username: postgres
     url: jdbc:postgresql://localhost:5432/postgres
+
+app:
+  keycloak:
+    client-ids: react,
+    role-claim: resource_access
 
 
 logging:
